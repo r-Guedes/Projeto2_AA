@@ -5,6 +5,9 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import classification_report
 import matplotlib.pyplot as plt
 from sklearn import metrics
+from sklearn.model_selection import cross_val_score
+
+
 import sys
 sys.path.append("..") # Adds higher directory to python modules path.
 
@@ -31,21 +34,22 @@ if __name__ == '__main__':
     print(classification_report(y_test, y_pred))
     print("Accuracy:", metrics.accuracy_score(y_test, y_pred))
 
-    error = []
+    cv_scores = []
+    neighbors = list(range(1, 40))
 
     # Calculating error for K values between 1 and 40
     for i in range(1, 40):
         knn = KNeighborsClassifier(n_neighbors=i)
-        knn.fit(x_train, y_train)
-        pred_i = knn.predict(x_test)
-        error.append(np.mean(pred_i != y_test))
+        scores = cross_val_score(knn, x_train, y_train, cv=10, scoring='accuracy')
+        cv_scores.append(scores.mean())
 
-    plt.figure(figsize=(12, 6))
-    plt.plot(range(1, 40), error, color='red', linestyle='dashed', marker='o',
-             markerfacecolor='blue', markersize=10)
-    plt.title('Error Rate K Value')
-    plt.xlabel('K Value')
-    plt.ylabel('Mean Error')
+    MSE = [1 - x for x in cv_scores]
+    optimal_k = neighbors[MSE.index(min(MSE))]
+    print("The optimal number of neighbors is %d" % optimal_k)
+
+    plt.plot(neighbors, MSE)
+    plt.xlabel('Number of Neighbors K')
+    plt.ylabel('Misclassification Error')
     plt.show()
 
 
