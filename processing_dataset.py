@@ -37,6 +37,7 @@ def get_dataset():
 
     y = new_y
     X = dataset.drop('quality', axis=1)
+    X = dataset.drop('total sulfur dioxide', axis=1)
 
     #visualize_dataset(dataset)
     return X, y
@@ -48,3 +49,4 @@ def visualize_dataset(dataset):
     display(correlation)
     plt.figure(figsize=(14, 12))
     heatmap = sns.heatmap(correlation, annot=True, linewidths=0, vmin=-1, cmap="RdBu_r")
+    plt.show()
