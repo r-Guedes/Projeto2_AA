@@ -6,6 +6,8 @@ from sklearn.metrics import classification_report
 import matplotlib.pyplot as plt
 from sklearn import metrics
 from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import GridSearchCV
+
 
 
 import sys
@@ -24,33 +26,37 @@ if __name__ == '__main__':
     x_train = scaler.transform(x_train)
     x_test = scaler.transform(x_test)
 
-    clf = KNeighborsClassifier(n_neighbors=1)
+    clf = KNeighborsClassifier(n_neighbors=10, weights='uniform')
     clf = clf.fit(x_train, y_train)
 
     y_pred = clf.predict(x_test)
+    y_pred_train = clf.predict(x_train)
 
     #A = clf.kneighbors_graph(X)
 
     print(classification_report(y_test, y_pred))
-    print("Accuracy:", metrics.accuracy_score(y_test, y_pred))
+    print("Accuracy Test:", metrics.accuracy_score(y_test, y_pred))
+    print("Accuracy Train:", metrics.accuracy_score(y_train, y_pred_train))
 
-    cv_scores = []
-    neighbors = list(range(1, 40))
+    """
+    Finding the best K
+    """
 
-    # Calculating error for K values between 1 and 40
-    for i in range(1, 40):
-        knn = KNeighborsClassifier(n_neighbors=i)
-        scores = cross_val_score(knn, x_train, y_train, cv=10, scoring='accuracy')
-        cv_scores.append(scores.mean())
+    k_range = list(range(1, 31))
+    weight_options = ['uniform', 'distance']
 
-    MSE = [1 - x for x in cv_scores]
-    optimal_k = neighbors[MSE.index(min(MSE))]
-    print("The optimal number of neighbors is %d" % optimal_k)
+    param_grid = dict(n_neighbors=k_range, weights=weight_options)
 
-    plt.plot(neighbors, MSE)
-    plt.xlabel('Number of Neighbors K')
-    plt.ylabel('Misclassification Error')
+    grid = GridSearchCV(clf, param_grid, cv=10)
+    grid.fit(X, y)
+    print(grid.best_params_)
+
+    grid_mean_scores = [result.mean_validation_score for result in grid.grid_scores_]
+    plt.plot(k_range, grid_mean_scores)
+    plt.xlabel('Value of K for KNN')
+    plt.ylabel('Cross-Validated Accuracy')
     plt.show()
+
 
 
 
