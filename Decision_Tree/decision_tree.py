@@ -1,7 +1,7 @@
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn import tree
-from sklearn.metrics import accuracy_score, mean_squared_error
+from sklearn.metrics import accuracy_score, mean_squared_error, classification_report
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import learning_curve
 import numpy as np
@@ -36,7 +36,7 @@ if __name__ == '__main__':
     train_pred = clf.predict(x_train)
     test_pred = clf.predict(x_test)
     
-    
+    print(classification_report(y_test, test_pred))
     print("Accuracy train set: ", accuracy_score(y_train, train_pred))
     print("Accuracy test set: ", accuracy_score(y_test, test_pred))
     print("Mean squared error - test set:", mean_squared_error(y_test, test_pred))
