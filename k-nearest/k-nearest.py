@@ -8,6 +8,7 @@ from sklearn import metrics
 from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import learning_curve
 import numpy as np
+from sklearn.feature_selection import SelectPercentile, chi2
 
 
 import sys
@@ -18,18 +19,14 @@ from processing_dataset import get_dataset
 if __name__ == '__main__':
 
     X, y = get_dataset()
-    # Divide Dataset: 20% Test and 80% Train
-    x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=5)
 
     scaler = StandardScaler()
     scaler.fit(X)
     X = scaler.transform(X)
 
-    scaler.fit(x_train)
-    x_train = scaler.transform(x_train)
-    x_test = scaler.transform(x_test)
+    x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=5)
 
-    clf = KNeighborsClassifier(n_neighbors=10, weights='uniform')
+    clf = KNeighborsClassifier(n_neighbors=20, weights='uniform')
     clf = clf.fit(x_train, y_train)
 
     y_pred = clf.predict(x_test)
@@ -77,25 +74,19 @@ if __name__ == '__main__':
 
     """
     Finding the best K
-
-
-    k_range = list(range(1, 31))
+    """
+    k_range = list(range(1, 34))
     weight_options = ['uniform', 'distance']
+    algorithm = ['ball_tree', 'brute', 'auto', 'kd_tree']
 
-    param_grid = dict(n_neighbors=k_range, weights=weight_options)
+    param_grid = dict(n_neighbors=k_range, weights=weight_options, algorithm=algorithm)
 
-    grid = GridSearchCV(clf, param_grid, cv=10)
-    grid.fit(X, y)
+    grid = GridSearchCV(clf, param_grid, cv=40)
+    grid = grid.fit(X, y)
     print(grid.best_params_)
 
-    grid_mean_scores = [result.mean_validation_score for result in grid.grid_scores_]
-    plt.plot(k_range, grid_mean_scores)
-    plt.xlabel('Value of K for KNN')
-    plt.ylabel('Cross-Validated Accuracy')
+    #grid_mean_scores = [result.mean_validation_score for result in grid.grid_scores_]
+    #plt.plot(k_range, grid_mean_scores)
+    #plt.xlabel('Value of K for KNN')
+    #plt.ylabel('Cross-Validated Accuracy')
     plt.show()
-    """
-
-
-
-
-

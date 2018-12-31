@@ -37,7 +37,9 @@ def get_dataset():
 
     y = new_y
     X = dataset.drop('quality', axis=1)
-    X = dataset.drop('total sulfur dioxide', axis=1)
+    X = X.drop('total sulfur dioxide', axis=1)
+    X = X.drop('fixed acidity', axis=1)
+    X = X.drop('citric acid', axis=1)
 
     #visualize_dataset(dataset)
     return X, y

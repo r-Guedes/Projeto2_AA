@@ -21,15 +21,13 @@ if __name__ == '__main__':
 
     X, y = get_dataset()
 
-    # Divide Dataset: 20% Test and 80% Train
+    scaler = StandardScaler()
+    scaler.fit(X)
+    X = scaler.transform(X)
+
     x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=5)
 
-    scaler = StandardScaler()
-    scaler.fit(x_train)
-    x_train = scaler.transform(x_train)
-    x_test = scaler.transform(x_test)
-
-    clf = tree.DecisionTreeClassifier(criterion='gini', max_depth=3, min_samples_split=10)
+    clf = tree.DecisionTreeClassifier(criterion='gini', max_depth=3, min_samples_split=30)
 
     clf = clf.fit(x_train,y_train)
     
@@ -81,12 +79,11 @@ if __name__ == '__main__':
     plt.show()
 
     """
-    parameters = {'min_samples_split': range(10, 500, 20), 'max_depth': range(1, 20, 2)}
+    parameters = {'min_samples_split': range(10, 500, 20), 'max_depth': range(1, 20, 2), 'criterion': ['gini', 'entropy']}
     clf = GridSearchCV(tree.DecisionTreeClassifier(), parameters, n_jobs=4)
     clf.fit(X, y)
     print(clf.best_score_, clf.best_params_)
     """
-    
     
     
     
