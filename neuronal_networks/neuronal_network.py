@@ -4,6 +4,10 @@ from optimize import optimize
 from train_wine_model import nn_train
 from evaluate_wine_model import evaluate
 from test_model import test
+from sklearn.preprocessing import StandardScaler
+
+import sys
+sys.path.append("..") # Adds higher directory to python modules path.
 
 from processing_dataset import get_dataset
 
@@ -12,6 +16,10 @@ from processing_dataset import get_dataset
 if __name__ == '__main__':
 
     X, y = get_dataset()
+    
+    scaler = StandardScaler()
+    scaler.fit(X)
+    X = scaler.transform(X)
 
     x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=5)
 	

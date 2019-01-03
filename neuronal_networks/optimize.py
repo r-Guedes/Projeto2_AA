@@ -9,7 +9,8 @@ def optimize(x_train, y_train, x_test, y_test):
 
     dense_layers = [2, 4, 8]
     layer_sizes = [32, 64, 128]
-    learn_rates = [0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8]
+    #learn_rates = [0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8]
+    learn_rates = [0.1]
     classifications = 3
 
     results = []
@@ -22,7 +23,7 @@ def optimize(x_train, y_train, x_test, y_test):
     
                     model = Sequential()
     
-                    model.add(Dense(11, input_dim=10, activation="relu"))	
+                    model.add(Dense(9, input_dim=8, activation="relu"))	
     
                     for _ in range(dense_layer):
                         model.add(Dense(layer_size, activation="relu"))

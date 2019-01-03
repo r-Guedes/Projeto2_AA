@@ -9,7 +9,7 @@ def nn_train(x_train, y_train, x_test, y_test, best_parameters):
 
     model = Sequential()
 
-    model.add(Dense(11, input_dim=10, activation='relu'))
+    model.add(Dense(9, input_dim=8, activation='relu'))
 
     for _ in range(best_parameters["dense_layer"]):
         model.add(Dense(best_parameters["layer_size"], activation="relu"))
