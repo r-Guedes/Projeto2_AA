@@ -28,7 +28,7 @@ def get_dataset():
     new_y = []
 
     for each in y:
-        if 0 <= each <= 4:
+        if 0 <= each <= 5:
             new_y.append(0)
         elif each == 6:
             new_y.append(1)
