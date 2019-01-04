@@ -15,24 +15,13 @@ sys.path.append("..") # Adds higher directory to python modules path.
 
 from processing_dataset import get_dataset
 
-def report(results, n_top=3):
-    for i in range(1, n_top + 1):
-        candidates = np.flatnonzero(results['rank_test_score'] == i)
-        for candidate in candidates:
-            print("Model with rank: {0}".format(i))
-            print("Mean validation score: {0:.3f} (std: {1:.3f})".format(
-                  results['mean_test_score'][candidate],
-                  results['std_test_score'][candidate]))
-            print("Parameters: {0}".format(results['params'][candidate]))
-            print("")
-
 if __name__ == '__main__':
 
     X, y = get_dataset()
 
     x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=5)
 
-    clf = RandomForestClassifier(n_estimators=10, max_features=8)
+    clf = RandomForestClassifier(n_estimators=25, max_features=6, max_depth=3, min_samples_split=3)
     clf.fit(x_train, y_train)
 
     y_pred = clf.predict(x_test)
@@ -55,23 +44,19 @@ if __name__ == '__main__':
     report(random_search.cv_results_)
     """
     # use a full grid over all parameters
-    param_grid = {"max_depth": [1, 2, 3, None],
-                  "max_features": [4, 5, 6, 7, 8],
-                  "min_samples_split": [2, 3, 10],
-                  "bootstrap": [True, False],
-                  "criterion": ["gini", "entropy"]}
+    param_grid = {"max_depth": [1, 2, 3, None], "max_features": [4, 5, 6, 7, 8], "min_samples_split": [2, 3, 10], "bootstrap": [True, False], "criterion": ["gini", "entropy"], "n_estimators": range(1,30)}
 
     grid_search = GridSearchCV(clf, param_grid=param_grid, cv=4)
     grid_search.fit(X, y)
-    report(grid_search.cv_results_)
+    print(grid_search.best_params_)
 
     n = 30
     accuracy = [None]*n
     for i in range(n):
-        classifier = RandomForestClassifier(n_estimators=i + 1)
+        classifier = RandomForestClassifier(max_features=6, max_depth=3, min_samples_split=3, n_estimators=i + 1)
         classifier.fit(x_train, y_train)
         predictions = classifier.predict(x_test)
-        accuracy[i] = metrics.cross_val_score(classifier, x_train, y_train)
+        accuracy[i] = cross_val_score(classifier, x_train, y_train, cv=4)
 
     plt.plot(range(1, n + 1), accuracy)
     plt.xlabel("Number of trees")

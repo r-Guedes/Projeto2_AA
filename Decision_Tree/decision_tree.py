@@ -12,6 +12,7 @@ from sklearn.externals.six import StringIO
 from IPython.display import Image
 from sklearn.tree import export_graphviz
 import pydotplus
+from collections import OrderedDict
 
 sys.path.append("..") # Adds higher directory to python modules path.
 
@@ -83,14 +84,52 @@ if __name__ == '__main__':
     grid = grid.fit(X, y)
     print(grid.best_params_)
 
+    ## mean scores
+
     grid_mean_scores = [{'max_depth': result[0]['max_depth'],'cv': result.mean_validation_score} for result in grid.grid_scores_]
 
-    # Plot Max D
-    #
-    #  plt.plot(range(10, 500, 20), grid_mean_scores)
+    graph_aggregatted = OrderedDict()
+
+    for score in grid_mean_scores:
+        if score["max_depth"] not in graph_aggregatted:
+            graph_aggregatted[score["max_depth"]] = 0
+
+        graph_aggregatted[score["max_depth"]] = max(graph_aggregatted[score["max_depth"]], score["cv"])
+
+    cv_y = []
+
+    for key, value in graph_aggregatted.items():
+        cv_y.append(value)
+
+    # Plot Max Depth
+    plt.plot(range(1, 20), cv_y)
     plt.xlabel('Maximum Depth')
     plt.ylabel('Cross-Validated Accuracy')
     plt.show()
+
+    ## min_samples_split
+
+    grid_min_samples_split = [{'min_samples_split': result[0]['min_samples_split'],'cv': result.mean_validation_score} for result in grid.grid_scores_]
+
+    graph_aggregatted = OrderedDict()
+
+    for score in grid_min_samples_split:
+        if score["min_samples_split"] not in graph_aggregatted:
+            graph_aggregatted[score["min_samples_split"]] = 0
+
+        graph_aggregatted[score["min_samples_split"]] = max(score["cv"], graph_aggregatted[score["min_samples_split"]])
+
+    cv_y = []
+
+    for key, value in graph_aggregatted.items():
+        cv_y.append(value)
+
+    # Plot Max Depth
+    plt.plot(range(10, 500, 20), cv_y)
+    plt.xlabel('Min Samples Split')
+    plt.ylabel('Cross-Validated Accuracy')
+    plt.show()
+
 
 
     
