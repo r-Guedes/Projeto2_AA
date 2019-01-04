@@ -39,20 +39,4 @@ if __name__ == '__main__':
 
     print("Mean squared error - test set:", mean_squared_error(y_test, y_pred))
     print("Mean squared error - training set:", mean_squared_error(y_train, y_pred_train))
-    print("Cross_validation_evaluate: ", cross_val_score(gnb, x_train, y_train, cv=10))
-
-    print("--------------------------------- Bernoulli ---------------------------------")
-
-    bn = BernoulliNB()
-    bn.fit(x_train, y_train)
-
-    y_pred = bn.predict(x_test)
-    y_pred_train = bn.predict(x_train)
-
-    print(classification_report(y_test, y_pred))
-    print("Accuracy Test:", metrics.accuracy_score(y_test, y_pred))
-    print("Accuracy Train:", metrics.accuracy_score(y_train, y_pred_train))
-
-    print("Mean squared error - test set:", mean_squared_error(y_test, y_pred))
-    print("Mean squared error - training set:", mean_squared_error(y_train, y_pred_train))
-    print("Cross_validation_evaluate: ", cross_val_score(bn, x_train, y_train, cv=10))
+    print("Cross_validation_evaluate: ", cross_val_score(gnb, x_train, y_train, cv=10).mean())

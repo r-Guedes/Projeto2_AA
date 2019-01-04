@@ -26,7 +26,7 @@ if __name__ == '__main__':
 
     x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=5)
 
-    clf = KNeighborsClassifier(n_neighbors=20, weights='uniform')
+    clf = KNeighborsClassifier(n_neighbors=30, weights='uniform')
     clf = clf.fit(x_train, y_train)
 
     y_pred = clf.predict(x_test)
@@ -40,8 +40,9 @@ if __name__ == '__main__':
 
     print("Mean squared error - test set:", mean_squared_error(y_test, y_pred))
     print("Mean squared error - training set:", mean_squared_error(y_train, y_pred_train))
-    print("Cross_validation_evaluate: ", cross_val_score(clf,x_train,y_train,cv=10))
+    print("Cross_validation_evaluate: ", cross_val_score(clf,x_train,y_train,cv=20).mean())
 
+    """
     # Create CV training and test scores for various training set sizes
     train_sizes, train_scores, test_scores = learning_curve(clf,
                                                             X,
@@ -71,22 +72,23 @@ if __name__ == '__main__':
     plt.xlabel("Training Set Size"), plt.ylabel("Score"), plt.legend(loc="best")
     plt.tight_layout()
     plt.show()
-
+    """
     """
     Finding the best K
     """
     k_range = list(range(1, 34))
     weight_options = ['uniform', 'distance']
-    algorithm = ['ball_tree', 'brute', 'auto', 'kd_tree']
+    #algorithm = ['ball_tree', 'brute', 'auto', 'kd_tree']
 
-    param_grid = dict(n_neighbors=k_range, weights=weight_options, algorithm=algorithm)
+    param_grid = dict(n_neighbors=k_range)
 
-    grid = GridSearchCV(clf, param_grid, cv=40)
+    grid = GridSearchCV(clf, param_grid, cv=4, scoring='accuracy')
     grid = grid.fit(X, y)
+    print(len(grid.grid_scores_))
     print(grid.best_params_)
 
-    #grid_mean_scores = [result.mean_validation_score for result in grid.grid_scores_]
-    #plt.plot(k_range, grid_mean_scores)
-    #plt.xlabel('Value of K for KNN')
-    #plt.ylabel('Cross-Validated Accuracy')
+    grid_mean_scores = [result.mean_validation_score for result in grid.grid_scores_]
+    plt.plot(k_range, grid_mean_scores)
+    plt.xlabel('Value of K for KNN')
+    plt.ylabel('Cross-Validated Accuracy')
     plt.show()

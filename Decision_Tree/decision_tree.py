@@ -27,7 +27,7 @@ if __name__ == '__main__':
 
     x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=5)
 
-    clf = tree.DecisionTreeClassifier(criterion='gini', max_depth=3, min_samples_split=30)
+    clf = tree.DecisionTreeClassifier(criterion='gini', max_depth=3, min_samples_split=10)
 
     clf = clf.fit(x_train,y_train)
     
@@ -39,7 +39,7 @@ if __name__ == '__main__':
     print("Accuracy test set: ", accuracy_score(y_test, test_pred))
     print("Mean squared error - test set:", mean_squared_error(y_test, test_pred))
     print("Mean squared error - training set:", mean_squared_error(y_train, train_pred))
-    print("Cross_validation_evaluate: ", cross_val_score(clf, x_train, y_train, cv=10))
+    print("Cross_validation_evaluate: ", cross_val_score(clf, x_train, y_train, cv=10).mean())
 
     dot_data = StringIO()
     export_graphviz(clf, out_file=dot_data,
@@ -78,12 +78,21 @@ if __name__ == '__main__':
     plt.tight_layout()
     plt.show()
 
-    """
-    parameters = {'min_samples_split': range(10, 500, 20), 'max_depth': range(1, 20, 2), 'criterion': ['gini', 'entropy']}
-    clf = GridSearchCV(tree.DecisionTreeClassifier(), parameters, n_jobs=4)
-    clf.fit(X, y)
-    print(clf.best_score_, clf.best_params_)
-    """
+    parameters = {'min_samples_split': range(10, 500, 20), 'max_depth': range(1, 20), 'criterion': ['gini', 'entropy']}
+    grid = GridSearchCV(tree.DecisionTreeClassifier(), parameters, n_jobs=4)
+    grid = grid.fit(X, y)
+    print(grid.best_params_)
+
+    grid_mean_scores = [{'max_depth': result[0]['max_depth'],'cv': result.mean_validation_score} for result in grid.grid_scores_]
+
+    # Plot Max D
+    #
+    #  plt.plot(range(10, 500, 20), grid_mean_scores)
+    plt.xlabel('Maximum Depth')
+    plt.ylabel('Cross-Validated Accuracy')
+    plt.show()
+
+
     
     
     

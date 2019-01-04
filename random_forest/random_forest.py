@@ -3,7 +3,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.ensemble import RandomForestClassifier
 import matplotlib.pyplot as plt
-from scipy.stats import randint as sp_randint
+from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import classification_report, mean_squared_error
 from sklearn import metrics
@@ -32,7 +32,7 @@ if __name__ == '__main__':
 
     x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=5)
 
-    clf = RandomForestClassifier(n_estimators=25, max_depth=3, max_features=8)
+    clf = RandomForestClassifier(n_estimators=10, max_features=8)
     clf.fit(x_train, y_train)
 
     y_pred = clf.predict(x_test)
@@ -40,6 +40,7 @@ if __name__ == '__main__':
     print(classification_report(y_test, y_pred))
     print("Accuracy Test:", metrics.accuracy_score(y_test, y_pred))
     print("Accuracy Train:", metrics.accuracy_score(y_train, y_pred_train))
+    print("Cross_validation_evaluate: ", cross_val_score(clf, x_train, y_train, cv=10).mean())
 
     """
     param_dist = {"max_depth": [3, None],
@@ -52,27 +53,30 @@ if __name__ == '__main__':
                                        n_iter=n_iter_search, cv=5)
     random_search.fit(x_train, y_train)
     report(random_search.cv_results_)
-
+    """
     # use a full grid over all parameters
-    param_grid = {"max_depth": [3, None],
-                  "max_features": [1, 3, 8],
+    param_grid = {"max_depth": [1, 2, 3, None],
+                  "max_features": [4, 5, 6, 7, 8],
                   "min_samples_split": [2, 3, 10],
                   "bootstrap": [True, False],
                   "criterion": ["gini", "entropy"]}
 
-    grid_search = GridSearchCV(clf, param_grid=param_grid, cv=5)
-    grid_search.fit(x_train, y_train)
+    grid_search = GridSearchCV(clf, param_grid=param_grid, cv=4)
+    grid_search.fit(X, y)
     report(grid_search.cv_results_)
 
+    n = 30
+    accuracy = [None]*n
     for i in range(n):
         classifier = RandomForestClassifier(n_estimators=i + 1)
-        classifier = classifier.fit(x_train, y_train)
+        classifier.fit(x_train, y_train)
         predictions = classifier.predict(x_test)
-        accuracy[i] = metrics.accuracy_score(y_test, predictions)
+        accuracy[i] = metrics.cross_val_score(classifier, x_train, y_train)
 
     plt.plot(range(1, n + 1), accuracy)
     plt.xlabel("Number of trees")
     plt.ylabel("Accuracy of prediction")
     plt.title("Effect of the number of trees on the prediction accuracy")
     plt.show()
-    """
+
+    print("teste")
