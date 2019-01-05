@@ -8,8 +8,8 @@ from keras.layers import Dense
 def optimize(x_train, y_train, x_test, y_test):
 
     dense_layers = [2, 4, 8]
+    #dense_layers = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]
     layer_sizes = [32, 64, 128]
-    #learn_rates = [0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8]
     learn_rates = [0.1]
     classifications = 3
 
@@ -51,10 +51,18 @@ def optimize(x_train, y_train, x_test, y_test):
 
     best_val_acc = None
     best_parameters = None
+    #acc = []
 
     for result in results:
+        #acc.append(result["val_acc"])
         if best_val_acc is None or best_val_acc < result["val_acc"]:
             best_val_acc = result["val_acc"]
             best_parameters = result
+    """        
+    plt.plot(dense_layers, acc, color="#111111")
+    plt.xlabel("Dense layer"), plt.ylabel("Accuracy")
+    plt.tight_layout()
+    plt.show()
+    """
 
     return best_parameters

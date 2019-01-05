@@ -42,7 +42,7 @@ if __name__ == '__main__':
     print("Mean squared error - training set:", mean_squared_error(y_train, y_pred_train))
     print("Cross_validation_evaluate: ", cross_val_score(clf,x_train,y_train,cv=20).mean())
 
-    """
+    
     # Create CV training and test scores for various training set sizes
     train_sizes, train_scores, test_scores = learning_curve(clf,
                                                             X,
@@ -72,7 +72,7 @@ if __name__ == '__main__':
     plt.xlabel("Training Set Size"), plt.ylabel("Score"), plt.legend(loc="best")
     plt.tight_layout()
     plt.show()
-    """
+
     """
     Finding the best K
     """
